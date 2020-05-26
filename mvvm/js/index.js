@@ -1,33 +1,32 @@
-function SelfVue(data, el, exp) {
+function SelfVue(options) {
   var self = this;
-  this.data = data;
+  this.data = options.data;
+  this.methods = options.methods;
 
-  Object.keys(data).forEach((key) => {
+  Object.keys(this.data).forEach(function (key) {
     self.proxyKeys(key);
   });
 
-  observe(data);
-  /**
-   * 初始化模版的值
-   */
-  el.innerHTML = this.data[exp];
-  new Watcher(this, exp, function (value) {
-    el.innerHTML = value;
-  });
-
-  return this;
+  observe(this.data);
+  new Compile(options.el, this);
+  options.mounted.call(this); // 所有事情处理好后执行mounted函数
 }
 
 SelfVue.prototype = {
+  /**
+   *
+   * @param {*} key 做一层代理
+   */
   proxyKeys: function (key) {
     var self = this;
     Object.defineProperty(this, key, {
       enumerable: true,
       configurable: true,
-      get: function proxyGetter() {
+      get: function getter() {
         return self.data[key];
       },
-      set: function proxySetter(newVal) {
+
+      set: function setter(newVal) {
         self.data[key] = newVal;
       },
     });

@@ -1,4 +1,9 @@
-// 实现订阅者watcher, 可以收到属性的变化通知并执行相应的函数, 从而更新相应的试图
+/**
+ * 实现订阅者watcher, 可以收到属性的变化通知并执行相应的函数, 从而更新相应的试图
+ * @param {*} vm SelfVue实例
+ * @param {*} exp 属性名
+ * @param {*} cb
+ */
 function Watcher(vm, exp, cb) {
   this.vm = vm;
   this.exp = exp;
@@ -22,7 +27,7 @@ Watcher.prototype = {
 
   get: function () {
     Dep.target = this;
-    var value = this.vm.data[this.exp];
+    var value = this.vm.data[this.exp]; // 强制执行监听器里的get函数
     Dep.target = null;
     return value;
   },
